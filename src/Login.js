@@ -192,7 +192,7 @@ const Login = () => {
             <br />
             <span className="line">
               {/*put router link here*/}
-              <a href="#">Регистрация</a>
+              <a href="/register">Регистрация</a>
             </span>
           </p>
         </section>

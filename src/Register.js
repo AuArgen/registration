@@ -104,10 +104,10 @@ const Register = () => {
           >
             {errMsg}
           </p>
-          <h1>Register</h1>
+          <h1>Регитрация</h1>
           <form onSubmit={handleSubmit}>
             <label htmlFor="username">
-              Username:
+              Логин:
               <FontAwesomeIcon
                 icon={faCheck}
                 className={validName ? "valid" : "hide"}
@@ -145,7 +145,7 @@ const Register = () => {
             </p>
 
             <label htmlFor="password">
-              Password:
+              Пароль:
               <FontAwesomeIcon
                 icon={faCheck}
                 className={validPwd ? "valid" : "hide"}
@@ -185,7 +185,7 @@ const Register = () => {
             </p>
 
             <label htmlFor="confirm_pwd">
-              Confirm Password:
+              Повторите пароль:
               <FontAwesomeIcon
                 icon={faCheck}
                 className={validMatch && matchPwd ? "valid" : "hide"}
@@ -219,7 +219,7 @@ const Register = () => {
             <button
               disabled={!validName || !validPwd || !validMatch ? true : false}
             >
-              Sign Up
+              Регистрация
             </button>
           </form>
           <p>
@@ -227,7 +227,7 @@ const Register = () => {
             <br />
             <span className="line">
               {/*put router link here*/}
-              <a href="#">Sign In</a>
+              <a href="/">Вход</a>
             </span>
           </p>
         </section>
