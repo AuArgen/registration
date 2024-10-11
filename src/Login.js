@@ -6,14 +6,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "./api/axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = "/login";
+const USER_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Adjust the regex to your requirements
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,54}$/; // Password regex
+const LOGIN_URL =
+  "https://cors-anywhere.herokuapp.com/https://dostavka.arendabook.com/api/login"; // Update the URL
 
 const Login = () => {
   const userRef = useRef();
   const errRef = useRef();
+  const navigate = useNavigate(); // Initialize useNavigate for redirection
 
   const [user, setUser] = useState("");
   const [validName, setValidName] = useState(false);
@@ -22,10 +25,6 @@ const Login = () => {
   const [pwd, setPwd] = useState("");
   const [validPwd, setValidPwd] = useState(false);
   const [pwdFocus, setPwdFocus] = useState(false);
-
-  const [matchPwd, setMatchPwd] = useState("");
-  const [validMatch, setValidMatch] = useState(false);
-  const [matchFocus, setMatchFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
@@ -40,46 +39,48 @@ const Login = () => {
 
   useEffect(() => {
     setValidPwd(PWD_REGEX.test(pwd));
-    setValidMatch(pwd === matchPwd);
-  }, [pwd, matchPwd]);
+  }, [pwd]);
 
   useEffect(() => {
     setErrMsg("");
-  }, [user, pwd, matchPwd]);
+  }, [user, pwd]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if button enabled with JS hack
     const v1 = USER_REGEX.test(user);
     const v2 = PWD_REGEX.test(pwd);
     if (!v1 || !v2) {
       setErrMsg("Invalid Entry");
       return;
     }
+
     try {
+      const payload = { email: user, password: pwd };
+      console.log("Sending payload:", JSON.stringify(payload));
+
       const response = await axios.post(
-        REGISTER_URL,
-        JSON.stringify({ user, pwd }),
+        "https://dostavka.arendabook.com/api/login",
+        JSON.stringify(payload),
         {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json", // Matches Postman's Content-Type
+            Accept: "*/*", // Accepts all response types
+            // Add any other headers you need
+          },
           withCredentials: true,
         }
       );
-      console.log(response?.data);
-      console.log(response?.accessToken);
-      console.log(JSON.stringify(response));
-      setSuccess(true);
 
-      setUser("");
-      setPwd("");
-      setMatchPwd("");
+      if (response.data.access_token) {
+        setSuccess(true);
+        navigate("/profile");
+      }
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
-      } else if (err.response?.status === 409) {
-        setErrMsg("Username Taken");
       } else {
-        setErrMsg("Registration Failed");
+        console.error("Response Data:", err.response.data);
+        setErrMsg(err.response.data.message || "Login Failed");
       }
       errRef.current.focus();
     }
@@ -128,6 +129,7 @@ const Login = () => {
               aria-describedby="uidnote"
               onFocus={() => setUserFocus(true)}
               onBlur={() => setUserFocus(false)}
+              placeholder="exmple@gmail.com"
             />
             <p
               id="uidnote"
@@ -136,7 +138,7 @@ const Login = () => {
               }
             >
               <FontAwesomeIcon icon={faInfoCircle} />
-              4 to 24 characters.
+              4 to 53 characters.
               <br />
               Must begin with a letter.
               <br />
@@ -191,8 +193,11 @@ const Login = () => {
             Регистрация с нуля
             <br />
             <span className="line">
-              {/*put router link here*/}
               <a href="/register">Регистрация</a>
+            </span>
+            <br />
+            <span className="line">
+              <a href="/Profile">Профиль</a>
             </span>
           </p>
         </section>
