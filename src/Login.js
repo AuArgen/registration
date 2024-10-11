@@ -53,6 +53,8 @@ const Login = () => {
       setErrMsg("Invalid Entry");
       return;
     }
+    setSuccess(true);
+    navigate("/profile");
 
     try {
       const payload = { email: user, password: pwd };
@@ -194,10 +196,6 @@ const Login = () => {
             <br />
             <span className="line">
               <a href="/register">Регистрация</a>
-            </span>
-            <br />
-            <span className="line">
-              <a href="/Profile">Профиль</a>
             </span>
           </p>
         </section>
